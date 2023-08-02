@@ -42,4 +42,3 @@ python .\Scraper\ https://www.ynetnews.com/ 5 2 true
 * __max_depth__ (positive integer): The maximum depth of pages to be scraped. It must be a positive integer.
 
 * __unique__ (boolean): A boolean value indicating whether the scraper should only extract unique items. Accepted values are "True" or "False".
-
