@@ -2,8 +2,13 @@ from threading import Lock, Thread
 import os
 from queue import Queue, Empty
 from logging import error
-from .LinkExtractor import LinkExtractor
-from .utils import encode_url_to_filename, LinkWrapper
+# run as main module or not
+if len(__name__.split(".")) == 1:
+    from LinkExtractor import LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
+    from utils import encode_url_to_filename, LinkWrapper  # type:ignore # pylint: disable=import-error # noqa
+else:
+    from .LinkExtractor import LinkExtractor
+    from .utils import encode_url_to_filename, LinkWrapper
 
 
 class Scraper:
@@ -41,6 +46,7 @@ class Scraper:
             while True:
                 try:
                     try:
+                        # arbitrarily chosen amount of time based on the parameters so the threads wont close too early
                         lw: LinkWrapper = queue.get(
                             timeout=LinkExtractor.TIMEOUT*LinkExtractor.RETRIES)
                     except Empty:

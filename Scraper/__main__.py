@@ -1,7 +1,10 @@
 import argparse
-from .Scraper import Scraper
-from .LinkExtractor import LinkExtractor
-
+if __name__ == "__main__":
+    from Scraper import Scraper  # type:ignore # pylint: disable=import-error # noqa
+    from LinkExtractor import LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
+else:
+    from .Scraper import Scraper
+    from .LinkExtractor import LinkExtractor
 
 # arbitrary chosen values that can be added to CLI but it is not in the definitions
 NUM_THREADS: int = 10
@@ -37,6 +40,7 @@ def boolean(value: str) -> bool:
 def main() -> None:
     """main entry point for program logic
     """
+
     parser = argparse.ArgumentParser(
         description="CLI Input Validation Example")
     # base_url, extract_amount_, max_depth_, unique_

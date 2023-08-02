@@ -3,7 +3,11 @@ from logging import warn
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup as bs4
 import requests
-from .utils import is_valid_url
+# run as main module or not
+if len(__name__.split(".")) == 1:
+    from utils import is_valid_url  # type:ignore # pylint: disable=import-error # noqa
+else:
+    from .utils import is_valid_url
 
 
 class LinkExtractor:
