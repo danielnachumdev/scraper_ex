@@ -7,6 +7,7 @@ This code provides an example of a Command Line Interface (CLI) tool for web scr
 * multithreading with worker pool execution
 * Wrapper classes to create abstraction for end user
 * additional extra arguments inside the code for more control over the scalability
+* dynamic resource usage scaling based on usage
 ## Prerequisites
 
 - Python 3.10 or later installed on your system.
