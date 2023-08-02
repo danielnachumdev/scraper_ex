@@ -6,21 +6,31 @@ import requests
 class LinkExtractor:
     TIMEOUT: float = 1
 
-    @staticmethod
-    def download_html(url) -> Optional[str]:
-        try:
-            response = requests.get(url, timeout=LinkExtractor.TIMEOUT)
-            response.raise_for_status()
-            return response.text
-        except requests.exceptions.RequestException as e:
-            print(f"Error occurred: {e}")
-            return None
+    def __init__(self, base_url: str) -> None:
+        self.base_url = base_url
+        self.html: Optional[str] = None
 
-    def __init__(self, url: str) -> None:
-        self.url = url
+    def get_links(self) -> Generator[str, None, None]:
+        """yield the links that appear inside the page of the url one by one with repetitions
+        This function is a facade for iter(self)
+        Yields:
+            Generator[str, None, None]: this function yield 'str' only
+        """
+        yield from self
+
+    def acquire_html(self) -> None:
+        try:
+            response = requests.get(
+                self.base_url, timeout=LinkExtractor.TIMEOUT)
+            response.raise_for_status()
+            self.html = response.text
+        except requests.exceptions.RequestException as e:
+            raise e
 
     def __iter__(self) -> Generator[str, None, None]:
-        soup = bs4(LinkExtractor.download_html(
-            self.url), features="html.parser")
+        if self.html is None:
+            raise ValueError(
+                "html must be acquired first with self.acquire_html")
+        soup = bs4(self.html, features="html.parser")
         for a_tag in soup.find_all("a", href=True):
             yield a_tag.attrs["href"]
