@@ -1,1 +1,1 @@
-from .Scraper import Scraper
+from .scraper import Scraper

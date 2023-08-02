@@ -4,10 +4,10 @@ from queue import Queue, Empty
 from logging import error
 # run as main module or not
 if len(__name__.split(".")) == 1:
-    from LinkExtractor import LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
+    from link_extractor import LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
     from utils import encode_url_to_filename, LinkWrapper  # type:ignore # pylint: disable=import-error # noqa
 else:
-    from .LinkExtractor import LinkExtractor
+    from .link_extractor import LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
     from .utils import encode_url_to_filename, LinkWrapper
 
 

@@ -1,10 +1,10 @@
 import argparse
 if __name__ == "__main__":
-    from Scraper import Scraper  # type:ignore # pylint: disable=import-error # noqa
-    from LinkExtractor import LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
+    from scraper import Scraper  # type:ignore # pylint: disable=import-error # noqa
+    from link_extractor import LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
 else:
-    from .Scraper import Scraper
-    from .LinkExtractor import LinkExtractor
+    from .scraper import Scraper
+    from .link_extractor import LinkExtractor
 
 # arbitrary chosen values that can be added to CLI but it is not in the definitions
 NUM_THREADS: int = 10
