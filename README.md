@@ -31,7 +31,7 @@ Scraper(NUM_THREADS).scrape(base_url, extract_amount, max_depth, unique)
 ```
 or
 ```bash
-python .\Scraper\ https://www.ynetnews.com/ 5 2 true 
+python .\scraper\ https://www.ynetnews.com/ 5 2 true 
 ```
 ### Arguments:
 
