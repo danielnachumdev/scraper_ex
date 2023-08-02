@@ -25,7 +25,7 @@ pip install -r ./requirements/publish.txt
 ```
 ## Usage
 ```python
-from Scraper import Scraper
+from scraper import Scraper
 NUM_THREADS=4
 Scraper(NUM_THREADS).scrape(base_url, extract_amount, max_depth, unique)
 ```
