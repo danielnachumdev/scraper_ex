@@ -1,23 +1,21 @@
-from typing import Optional, Generator
-from bs4 import BeautifulSoup as bs4
-import requests
-import validators
+from typing import Generator
 from logging import warn
 from urllib.parse import urlparse, urljoin
-
-
-def is_valid_url(url: str) -> bool:
-    return validators.url(url) is True
+from bs4 import BeautifulSoup as bs4
+import requests
+from .utils import is_valid_url
 
 
 class LinkExtractor:
+    """A wrapper class over bs4 to extract urls from html
+    """
     # arbitrary value that should be enough but will make sure the program wont run forever and will get stuck
     TIMEOUT: float = 5
     RETRIES: int = 5
 
     def __init__(self, base_url: str) -> None:
         self.base_url = base_url
-        self.html: Optional[str] = None
+        self.html: str = ""
 
     def get_links(self) -> Generator[str, None, None]:
         """yield the links that appear inside the page of the url one by one with repetitions
@@ -28,6 +26,8 @@ class LinkExtractor:
         yield from self
 
     def acquire_html(self) -> None:
+        """downloads the html of the base_url
+        """
         for _ in range(LinkExtractor.RETRIES):
             try:
                 response = requests.get(
@@ -36,7 +36,7 @@ class LinkExtractor:
                 self.html = response.text
                 return
             except requests.exceptions.RequestException as e:
-                self.html = ""
+                pass
         warn(
             f"Failed {LinkExtractor.RETRIES} times to acquire {self.base_url} after {LinkExtractor.TIMEOUT} timeout")
 
@@ -55,7 +55,6 @@ class LinkExtractor:
     @staticmethod
     def _make_absolute_url(base_url: str, url: str) -> str:
         # Parse the base URL and the given URL
-        parsed_base = urlparse(base_url)
         parsed_url = urlparse(url)
 
         # Check if the given URL is absolute or relative
@@ -68,3 +67,8 @@ class LinkExtractor:
             absolute_url = url
 
         return absolute_url
+
+
+__all__ = [
+    "LinkExtractor"
+]
