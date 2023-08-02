@@ -22,7 +22,7 @@ def positive_integer(value: str) -> int:
                 f"{value} is not a positive integer")
         return num
     except ValueError:
-        raise argparse.ArgumentTypeError(f"{value} is not a valid integer")
+        raise argparse.ArgumentTypeError(f"{value} is not a valid integer")  # pylint: disable=raise-missing-from # noqa
 
 
 def string(value: str) -> str:
