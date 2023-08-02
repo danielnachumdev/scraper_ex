@@ -10,7 +10,7 @@ def is_valid_url(url: str) -> bool:
 
 
 class LinkExtractor:
-    TIMEOUT: float = 1
+    TIMEOUT: float = 5
 
     def __init__(self, base_url: str) -> None:
         self.base_url = base_url

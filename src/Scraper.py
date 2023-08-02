@@ -44,6 +44,8 @@ class Scraper:
         # ================== ITERATION ====================
         while not queue.empty():
             lw: LinkWrapper = queue.get()
+            if not (lw.depth <= max_depth):
+                continue
             filename: str = encode_url_to_filename(lw.url)
             extract_count: int = 0
             extractor = LinkExtractor(lw.url)
@@ -55,9 +57,7 @@ class Scraper:
                     if link in unique_set:
                         continue
                     unique_set.add(link)
-                if extract_count >= extract_amount:
-                    continue
+                if not (extract_count < extract_amount):
+                    break
                 extract_count += 1
-                if lw.depth >= max_depth:
-                    continue
                 queue.put(LinkWrapper(link, lw.depth+1))
