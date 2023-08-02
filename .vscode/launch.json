@@ -11,7 +11,12 @@
             "program": "main.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "args": []
+            "args": [
+                "https://www.ynetnews.com/",
+                "5",
+                "2",
+                "true"
+            ]
         }
     ]
 }
