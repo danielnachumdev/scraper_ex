@@ -1,5 +1,5 @@
 from typing import Generator
-from logging import warn
+from logging import warning
 from urllib.parse import urlparse, urljoin
 from bs4 import BeautifulSoup as bs4
 import requests
@@ -41,7 +41,7 @@ class LinkExtractor:
                 return
             except requests.exceptions.RequestException as e:
                 pass
-        warn(
+        warning(
             f"Failed {LinkExtractor.RETRIES} times to acquire {self.base_url} after {LinkExtractor.TIMEOUT} timeout")
 
     def __iter__(self) -> Generator[str, None, None]:

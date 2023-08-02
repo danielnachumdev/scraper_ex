@@ -53,7 +53,7 @@ class Scraper:
                         break
                     self._run_one(lw, queue, unique_set, extract_amount,
                                   max_depth, unique, unique_set_lock)
-                except Exception as e:
+                except Exception as e:  # pylint: disable=broad-exception-caught
                     error(f"worker thread encountered an error: {e}")
 
         # create workers and start them
