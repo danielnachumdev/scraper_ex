@@ -13,8 +13,8 @@
             "justMyCode": true,
             "args": [
                 "https://www.ynetnews.com/",
+                "5",
                 "3",
-                "2",
                 "true"
             ]
         }

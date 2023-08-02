@@ -2,6 +2,7 @@ from typing import Optional, Generator
 from bs4 import BeautifulSoup as bs4
 import requests
 import validators
+from logging import warn
 from urllib.parse import urlparse, urljoin
 
 
@@ -10,7 +11,9 @@ def is_valid_url(url: str) -> bool:
 
 
 class LinkExtractor:
+    # arbitrary value that should be enough but will make sure the program wont run forever and will get stuck
     TIMEOUT: float = 5
+    RETRIES: int = 5
 
     def __init__(self, base_url: str) -> None:
         self.base_url = base_url
@@ -25,13 +28,17 @@ class LinkExtractor:
         yield from self
 
     def acquire_html(self) -> None:
-        try:
-            response = requests.get(
-                self.base_url, timeout=LinkExtractor.TIMEOUT)
-            response.raise_for_status()
-            self.html = response.text
-        except requests.exceptions.RequestException as e:
-            raise e
+        for _ in range(LinkExtractor.RETRIES):
+            try:
+                response = requests.get(
+                    self.base_url, timeout=LinkExtractor.TIMEOUT)
+                response.raise_for_status()
+                self.html = response.text
+                return
+            except requests.exceptions.RequestException as e:
+                self.html = ""
+        warn(
+            f"Failed {LinkExtractor.RETRIES} times to acquire {self.base_url} after {LinkExtractor.TIMEOUT} timeout")
 
     def __iter__(self) -> Generator[str, None, None]:
         if self.html is None:

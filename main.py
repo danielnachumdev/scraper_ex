@@ -10,7 +10,7 @@ def main() -> None:
     extract_amount = int(extract_amount_)
     max_depth = int(max_depth_)
     unique = unique_ in {"true", "True"}
-    Scraper.scrape(base_url, extract_amount, max_depth, unique)
+    Scraper(10).scrape(base_url, extract_amount, max_depth, unique)
 
 
 if __name__ == "__main__":
