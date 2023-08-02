@@ -42,7 +42,6 @@ class Scraper:
 
         # local implementation for easy access to upper scope
         def worker():
-            # will run until it receives a "break signal"
             while True:
                 try:
                     try:
@@ -57,15 +56,30 @@ class Scraper:
                     error(f"worker thread encountered an error: {e}")
 
         # create workers and start them
-        workers = [Thread(target=worker) for _ in range(self.num_workers)]
+        workers = set([Thread(target=worker) for _ in range(self.num_workers)])
         for w in workers:
             w.start()
+
+        while queue.unfinished_tasks > 0:
+            to_remove = set()
+            for w in workers:
+                if not w.is_alive():
+                    to_remove.add(w)
+            workers.difference_update(to_remove)
+
+            maximum_allowed = min(queue.unfinished_tasks, self.num_workers)
+            if len(workers) < maximum_allowed:
+                for _ in range(maximum_allowed-len(workers)):
+                    w = Thread(target=worker)
+                    w.start()
+                    workers.add(w)
 
     def _run_one(self, lw: LinkWrapper, queue: Queue[LinkWrapper], unique_set: set[str], extract_amount: int,
                  max_depth: int, unique: bool, unique_set_lock: Lock) -> None:
         """one job
 
         Args:
+            lw (LinkWrapper): the current item
             queue (Queue[LinkWrapper]): the queue to get items from
             unique_set (set[str]): the set to check uniqueness if required
             extract_amount (int): how many urls to extract from each page
