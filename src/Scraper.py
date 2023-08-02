@@ -1,7 +1,18 @@
 import threading
-from .LinkExtractor import LinkExtractor
 import os
 from queue import Queue
+import urllib.parse
+import re
+from .LinkExtractor import LinkExtractor
+
+
+def encode_url_to_filename(url: str):
+    # truncate https://
+    url = url[8:]
+    # remove any trailing non-alphanumeric characters
+    url = re.sub(r"[^a-zA-Z0-9]$", "", url)
+    # replace any non-alphanumeric characters and return
+    return re.sub(r"[^a-zA-Z0-9]", "_", url)
 
 
 class LinkWrapper:
@@ -33,10 +44,10 @@ class Scraper:
         # ================== ITERATION ====================
         while not queue.empty():
             lw: LinkWrapper = queue.get()
+            filename: str = encode_url_to_filename(lw.url)
             extract_count: int = 0
             extractor = LinkExtractor(lw.url)
             extractor.acquire_html()
-            filename: str = ""
             with open(f"./{lw.depth}/{filename}.html", "w", encoding="utf8") as f:
                 f.write(extractor.html)
             for link in extractor.get_links():
@@ -47,6 +58,6 @@ class Scraper:
                 if extract_count >= extract_amount:
                     continue
                 extract_count += 1
-                if lw.depth >= max_depth-1:
+                if lw.depth >= max_depth:
                     continue
                 queue.put(LinkWrapper(link, lw.depth+1))

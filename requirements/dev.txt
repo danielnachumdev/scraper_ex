@@ -4,3 +4,4 @@ requests
 types-requests 
 beautifulsoup4
 types-beautifulsoup4 
+validators
