@@ -42,8 +42,28 @@ class LinkWrapper:
         return hash(self.url)
 
 
+def calculate_html_timeout(base_timeout: float, try_number: int) -> float:
+    """will create a slightly increasing but upper bounded value 
+    for the timeout with respect to the number of tries
+
+    Args:
+        base_timeout (float): base timeout to calculate with respect to it
+        try_number (int): the index of the current trial number
+
+    Raises:
+        ValueError: if try_number is has a negative value
+
+    Returns:
+        float: new timeout value
+    """
+    if try_number < 0:
+        raise ValueError("try_number must be a non-negative integer")
+    return base_timeout + base_timeout*1/(try_number+1)
+
+
 __alL__ = [
     "encode_url_to_filename",
     "is_valid_url",
-    "LinkWrapper"
+    "LinkWrapper",
+    "calculate_html_timeout"
 ]
