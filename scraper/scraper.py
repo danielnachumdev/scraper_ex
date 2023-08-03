@@ -98,7 +98,7 @@ class Scraper:
             if not (extract_count < extract_amount):
                 break
             if not (lw.depth < max_depth):
-                continue
+                break
             if unique:
                 with unique_set_lock:
                     if link in unique_set:

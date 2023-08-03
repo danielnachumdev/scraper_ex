@@ -22,6 +22,7 @@ class LinkExtractor:
     def __init__(self, base_url: str) -> None:
         self.base_url = base_url
         self.html: str = EMPTY_HTML
+        self._tried_to_acquire: bool = False
 
     def get_links(self) -> Generator[str, None, None]:
         """yield the links that appear inside the page of the url one by one with repetitions
@@ -34,6 +35,7 @@ class LinkExtractor:
     def acquire_html(self) -> None:
         """downloads the html of the base_url
         """
+        self._tried_to_acquire = True
         for _ in range(LinkExtractor.RETRIES):
             try:
                 response = requests.get(
@@ -48,6 +50,8 @@ class LinkExtractor:
 
     def __iter__(self) -> Generator[str, None, None]:
         if self.html == EMPTY_HTML:
+            if self._tried_to_acquire:
+                return
             raise ValueError(
                 "html must be acquired first with self.acquire_html")
         soup = bs4(self.html, features="html.parser")
