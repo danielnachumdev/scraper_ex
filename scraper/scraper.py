@@ -94,18 +94,17 @@ class Scraper:
         extractor.acquire_html()
         with open(f"./{lw.depth}/{filename}.html", "w", encoding="utf8") as f:
             f.write(extractor.html)
-        for link in extractor.get_links():
-            if not (extract_count < extract_amount):
-                break
-            if not (lw.depth < max_depth):
-                break
-            if unique:
-                with unique_set_lock:
-                    if link in unique_set:
-                        continue
-                    unique_set.add(link)
-            extract_count += 1
-            queue.put(LinkWrapper(link, lw.depth+1))
+        if lw.depth < max_depth:
+            for link in extractor.get_links():
+                if not (extract_count < extract_amount):
+                    break
+                if unique:
+                    with unique_set_lock:
+                        if link in unique_set:
+                            continue
+                        unique_set.add(link)
+                extract_count += 1
+                queue.put(LinkWrapper(link, lw.depth+1))
         queue.task_done()
 
 
