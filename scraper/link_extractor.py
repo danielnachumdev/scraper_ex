@@ -9,6 +9,8 @@ if len(__name__.split(".")) == 1:
 else:
     from .utils import is_valid_url
 
+EMPTY_HTML = ""
+
 
 class LinkExtractor:
     """A wrapper class over bs4 to extract urls from html
@@ -19,7 +21,7 @@ class LinkExtractor:
 
     def __init__(self, base_url: str) -> None:
         self.base_url = base_url
-        self.html: str = ""
+        self.html: str = EMPTY_HTML
 
     def get_links(self) -> Generator[str, None, None]:
         """yield the links that appear inside the page of the url one by one with repetitions
@@ -45,7 +47,7 @@ class LinkExtractor:
             f"Failed {LinkExtractor.RETRIES} times to acquire {self.base_url} after {LinkExtractor.TIMEOUT} timeout")
 
     def __iter__(self) -> Generator[str, None, None]:
-        if self.html is None:
+        if self.html == EMPTY_HTML:
             raise ValueError(
                 "html must be acquired first with self.acquire_html")
         soup = bs4(self.html, features="html.parser")
