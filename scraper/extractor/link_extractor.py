@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup as bs4
 import requests
 # run as main module or not
 if len(__name__.split(".")) == 2:
-    print(__name__)
     from utils import is_valid_url, calculate_html_timeout, force_absolute_url  # type:ignore # pylint: disable=import-error # noqa
     from utils import TimeoutFunction  # type:ignore # pylint: disable=import-error # noqa
     from extractor import BaseExtractor  # type:ignore # pylint: disable=import-error # noqa
