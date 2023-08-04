@@ -2,7 +2,7 @@ from threading import Lock
 from queue import Queue, Empty
 from logging import error
 # run as main module or not
-if len(__name__.split(".")) == 1:
+if len(__name__.split(".")) == 2:
     from worker import Worker  # type:ignore # pylint: disable=import-error # noqa
     from extractor import LinkExtractor, BaseExtractor  # type:ignore # pylint: disable=import-error # noqa
     from utils import encode_url_to_filename, LinkWrapper  # type:ignore # pylint: disable=import-error # noqa
