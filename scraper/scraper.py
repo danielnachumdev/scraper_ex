@@ -5,11 +5,11 @@ from queue import Queue
 if len(__name__.split(".")) == 1:
     from utils import LinkWrapper  # type:ignore # pylint: disable=import-error # noqa
     from worker import Worker  # type:ignore # pylint: disable=import-error # noqa
-    from scraper_worker import ScraperWorker  # type:ignore # pylint: disable=import-error # noqa
+    from worker import ScraperWorker  # type:ignore # pylint: disable=import-error # noqa
 else:
     from .utils import LinkWrapper
     from .worker import Worker
-    from .scraper_worker import ScraperWorker
+    from .worker import ScraperWorker
 
 
 class Scraper:

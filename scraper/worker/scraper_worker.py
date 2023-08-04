@@ -8,8 +8,8 @@ if len(__name__.split(".")) == 1:
     from utils import encode_url_to_filename, LinkWrapper  # type:ignore # pylint: disable=import-error # noqa
 else:
     from .worker import Worker
-    from .extractor import LinkExtractor, BaseExtractor  # type:ignore # pylint: disable=import-error # noqa
-    from .utils import encode_url_to_filename, LinkWrapper
+    from ..extractor import LinkExtractor, BaseExtractor
+    from ..utils import encode_url_to_filename, LinkWrapper
 
 
 class ScraperWorker(Worker):
