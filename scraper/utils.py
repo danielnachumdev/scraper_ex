@@ -1,5 +1,6 @@
 import re
 import validators  # type:ignore
+from urllib.parse import urlparse, urljoin
 
 
 def encode_url_to_filename(url: str) -> str:
@@ -61,9 +62,26 @@ def calculate_html_timeout(base_timeout: float, try_number: int) -> float:
     return base_timeout + base_timeout*1/(try_number+1)
 
 
+def force_absolute_url(base_url: str, url: str) -> str:
+    # Parse the base URL and the given URL
+    parsed_url = urlparse(url)
+
+    # Check if the given URL is absolute or relative
+    is_absolute = bool(parsed_url.scheme) and bool(parsed_url.netloc)
+
+    # If the URL is relative, convert it to an absolute URL using the base URL
+    if not is_absolute:
+        absolute_url = urljoin(base_url, url)
+    else:
+        absolute_url = url
+
+    return absolute_url
+
+
 __alL__ = [
     "encode_url_to_filename",
     "is_valid_url",
     "LinkWrapper",
-    "calculate_html_timeout"
+    "calculate_html_timeout",
+    "force_absolute_url"
 ]

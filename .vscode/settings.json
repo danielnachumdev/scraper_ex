@@ -21,4 +21,7 @@
     "mypy.dmypyExecutable": "${workspaceFolder}/venv/Scripts/dmypy.exe",
     "mypy.configFile": "mypy.ini",
     "mypy.targets": [],
+    "cSpell.words": [
+        "nessaceary"
+    ],
 }
