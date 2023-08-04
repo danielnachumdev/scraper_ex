@@ -4,14 +4,12 @@ from logging import error
 # run as main module or not
 if len(__name__.split(".")) == 1:
     from worker import Worker  # type:ignore # pylint: disable=import-error # noqa
-    from link_extractor import LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
+    from extractor import LinkExtractor, BaseExtractor  # type:ignore # pylint: disable=import-error # noqa
     from utils import encode_url_to_filename, LinkWrapper  # type:ignore # pylint: disable=import-error # noqa
-    from extractor import Extractor  # type:ignore # pylint: disable=import-error # noqa
 else:
     from .worker import Worker
-    from .link_extractor import LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
+    from .extractor import LinkExtractor, BaseExtractor  # type:ignore # pylint: disable=import-error # noqa
     from .utils import encode_url_to_filename, LinkWrapper
-    from .extractor import Extractor
 
 
 class ScraperWorker(Worker):
@@ -28,7 +26,7 @@ class ScraperWorker(Worker):
                 try:
                     # arbitrarily chosen amount of time based on the parameters so the threads wont close too early
                     lw: LinkWrapper = queue.get(
-                        timeout=LinkExtractor.TIMEOUT*LinkExtractor.RETRIES)
+                        timeout=BaseExtractor.TIMEOUT*BaseExtractor.RETRIES)
                 except Empty:
                     break
                 self.work(lw, queue, unique_set, extract_amount,
@@ -52,7 +50,7 @@ class ScraperWorker(Worker):
         """
         filename: str = encode_url_to_filename(lw.url)
         extract_count: int = 0
-        extractor: Extractor = LinkExtractor(lw.url)
+        extractor: BaseExtractor = LinkExtractor(lw.url)
         extractor.prepare()
         with open(f"./{lw.depth}/{filename}.html", "w", encoding="utf8") as f:
             f.write(extractor.get_data())

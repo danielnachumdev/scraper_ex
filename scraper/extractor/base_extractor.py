@@ -2,13 +2,15 @@ from abc import ABC, abstractmethod
 from typing import Generator, Any
 
 
-class Extractor(ABC):
+class BaseExtractor(ABC):
     """Extractor Interface
     """
+    TIMEOUT: float = 2
+    RETRIES: int = 5
     EMPTY_DATA: Any = None
 
     def __init__(self):
-        self._prepared_data: Any = Extractor.EMPTY_DATA
+        self._prepared_data: Any = BaseExtractor.EMPTY_DATA
 
     @abstractmethod
     def _extract(self) -> Generator[Any, None, None]:
@@ -30,7 +32,7 @@ class Extractor(ABC):
     def is_prepared(self) -> bool:
         """return whether the data is prepared or not
         """
-        return self._prepared_data is not Extractor.EMPTY_DATA
+        return self._prepared_data is not BaseExtractor.EMPTY_DATA
 
     def prepare(self) -> None:
         """Extractor preparation function to prepare before calling extract()

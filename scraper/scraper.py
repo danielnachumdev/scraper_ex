@@ -1,18 +1,13 @@
-from threading import Lock, Thread
+from threading import Lock
 import os
-from queue import Queue, Empty
-from logging import error
+from queue import Queue
 # run as main module or not
 if len(__name__.split(".")) == 1:
-    from link_extractor import LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
-    from utils import encode_url_to_filename, LinkWrapper  # type:ignore # pylint: disable=import-error # noqa
-    from extractor import Extractor  # type:ignore # pylint: disable=import-error # noqa
+    from utils import LinkWrapper  # type:ignore # pylint: disable=import-error # noqa
     from worker import Worker  # type:ignore # pylint: disable=import-error # noqa
     from scraper_worker import ScraperWorker  # type:ignore # pylint: disable=import-error # noqa
 else:
-    from .link_extractor import LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
-    from .utils import encode_url_to_filename, LinkWrapper
-    from .extractor import Extractor
+    from .utils import LinkWrapper
     from .worker import Worker
     from .scraper_worker import ScraperWorker
 
