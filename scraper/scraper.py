@@ -33,6 +33,7 @@ class Scraper:
             max_depth (int): the maximum depth to traverse
             unique (bool): whether to force unique urls
         """
+        # =========== SETUP ===========
 
         # main thread creates the directories for all
         for depth in range(max_depth+1):
@@ -47,11 +48,23 @@ class Scraper:
         unique_set.add(base_url)
 
         # create workers and start them
-        workers: set[Worker] = set([ScraperWorker(queue, unique_set, unique_set_lock, extract_amount,
-                                                  max_depth, unique) for _ in range(self.num_workers)])
+        workers: set[Worker] = set([
+            ScraperWorker(
+                queue,
+                unique_set,
+                unique_set_lock,
+                extract_amount,
+                max_depth,
+                unique
+            )
+            for _ in range(self.num_workers)
+        ])
+
+        # ========== INITIAL RUN ==========
         for w in workers:
             w.run()
 
+        # ============ AUTO-SCALING ==============
         while queue.unfinished_tasks > 0:
             to_remove = set()
             for w in workers:

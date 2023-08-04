@@ -15,7 +15,10 @@ else:
 
 
 class ScraperWorker(Worker):
-    def __init__(self, *args, **kwargs):
+    """An implementation for Worker which does scraping
+    """
+
+    def __init__(self, *args, **kwargs):  # pylint: disable=useless-parent-delegation
         super().__init__(*args, **kwargs)
 
     def _run(self, queue: Queue[LinkWrapper], unique_set: set[str], unique_set_lock: Lock,
@@ -55,7 +58,7 @@ class ScraperWorker(Worker):
             f.write(extractor.get_data())
         if lw.depth < max_depth:
             for link in extractor.extract():
-                if not (extract_count < extract_amount):
+                if not (extract_count < extract_amount):  # pylint: disable=superfluous-parens
                     break
                 if unique:
                     with unique_set_lock:

@@ -53,8 +53,12 @@ def main() -> None:
                         help="A boolean")
 
     args = parser.parse_args()
-    Scraper(NUM_THREADS).scrape(args.base_url,
-                                args.extract_amount, args.max_depth, args.unique)
+    Scraper(NUM_THREADS).scrape(
+        args.base_url,
+        args.extract_amount,
+        args.max_depth,
+        args.unique
+    )
 
 
 if __name__ == "__main__":

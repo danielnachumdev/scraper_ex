@@ -1,6 +1,7 @@
 import re
 import validators  # type:ignore
 from urllib.parse import urlparse, urljoin
+from typing import Callable
 
 
 def encode_url_to_filename(url: str) -> str:
@@ -78,10 +79,13 @@ def force_absolute_url(base_url: str, url: str) -> str:
     return absolute_url
 
 
+TimeoutFunction = Callable[[float, int], float]
+
 __alL__ = [
     "encode_url_to_filename",
     "is_valid_url",
     "LinkWrapper",
     "calculate_html_timeout",
-    "force_absolute_url"
+    "force_absolute_url",
+    "TimeoutFunction"
 ]

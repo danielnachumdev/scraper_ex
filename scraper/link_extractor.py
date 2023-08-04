@@ -6,9 +6,11 @@ import requests
 # run as main module or not
 if len(__name__.split(".")) == 1:
     from utils import is_valid_url, calculate_html_timeout, force_absolute_url  # type:ignore # pylint: disable=import-error # noqa
+    from utils import TimeoutFunction  # type:ignore # pylint: disable=import-error # noqa
     from extractor import Extractor  # type:ignore # pylint: disable=import-error # noqa
 else:
     from .utils import is_valid_url, calculate_html_timeout, force_absolute_url
+    from .utils import TimeoutFunction
     from .extractor import Extractor
 
 
@@ -19,10 +21,11 @@ class LinkExtractor(Extractor):
     TIMEOUT: float = 2
     RETRIES: int = 5
 
-    def __init__(self, base_url: str) -> None:
+    def __init__(self, base_url: str, timeout_func: TimeoutFunction = calculate_html_timeout) -> None:
         super().__init__()
         self.base_url = base_url
         self._tried_to_acquire: bool = False
+        self.timeout_func = timeout_func
 
     def _extract(self) -> Generator[str, None, None]:
         """yield the links that appear inside the page of the url one by one with repetitions
@@ -35,8 +38,7 @@ class LinkExtractor(Extractor):
         soup = bs4(self.get_data(), features="html.parser")
         for a_tag in soup.find_all("a", href=True):
             maybe_relative_url = a_tag.attrs["href"]
-            absolute_url = force_absolute_url(
-                self.base_url, maybe_relative_url)
+            absolute_url = force_absolute_url(self.base_url, maybe_relative_url)  # noqa
             if is_valid_url(absolute_url):
                 yield absolute_url
 
@@ -49,7 +51,7 @@ class LinkExtractor(Extractor):
                 # we want the timeout to increase slightly with each
                 # fail because maybe the call needs more time
                 # but it has to be upper bounded or we risk the thread hanging
-                timeout = calculate_html_timeout(LinkExtractor.TIMEOUT, i)
+                timeout = self.timeout_func(LinkExtractor.TIMEOUT, i)
                 # downloading html
                 response = requests.get(self.base_url, timeout=timeout)
                 # checking if it was successful or not
