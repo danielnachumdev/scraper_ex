@@ -1,7 +1,14 @@
+# pylint: disable=invalid-name
 import argparse
-from .scraper import Scraper
-from .workers import ScraperWorker
-from .extractors import Extractor, LinkExtractor
+if len(__name__.split(".")) == 2:
+    from .scraper import Scraper
+    from .workers import ScraperWorker
+    from .extractors import Extractor, LinkExtractor
+else:
+    from scraper import Scraper  # type:ignore # noqa  #pylint: disable=import-error
+    from workers import ScraperWorker  # type:ignore # noqa  #pylint: disable=import-error
+    from extractors import Extractor, LinkExtractor  # type:ignore # noqa  #pylint: disable=import-error
+
 
 # arbitrary chosen values that can be added to CLI but it is not in the definitions
 NUM_THREADS: int = 10

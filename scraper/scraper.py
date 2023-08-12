@@ -1,8 +1,12 @@
 from threading import Lock
 import os
 from typing import Optional
-from .utils import LinkWrapper
-from .workers import WorkerPool, Worker
+if len(__name__.split(".")) == 2:
+    from .utils import LinkWrapper
+    from .workers import WorkerPool, Worker
+else:
+    from utils import LinkWrapper  # type:ignore # noqa  #pylint: disable=import-error
+    from workers import WorkerPool, Worker  # type:ignore # noqa  #pylint: disable=import-error
 
 
 class Scraper:

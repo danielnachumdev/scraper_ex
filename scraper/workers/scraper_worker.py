@@ -1,9 +1,14 @@
 from threading import Lock
 from typing import Any, cast
-import scraper.workers.worker_pool  # pylint: disable=unused-import
-from .worker import Worker
-from ..extractors import Extractor
-from ..utils import encode_url_to_filename, LinkWrapper
+if len(__name__.split(".")) == 3:
+    import scraper.workers.worker_pool  # pylint: disable=unused-import
+    from .worker import Worker
+    from ..extractors import Extractor
+    from ..utils import encode_url_to_filename, LinkWrapper
+else:
+    from workers import Worker  # type:ignore # noqa  #pylint: disable=import-error
+    from extractors import Extractor  # type:ignore # noqa  #pylint: disable=import-error
+    from utils import encode_url_to_filename, LinkWrapper  # type:ignore # noqa  #pylint: disable=import-error
 
 
 class ScraperWorker(Worker):

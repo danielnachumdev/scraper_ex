@@ -2,7 +2,10 @@ from threading import Thread
 from abc import ABC, abstractmethod
 from typing import Optional, Any
 from logging import error
-import scraper.workers.worker_pool  # pylint: disable=unused-import
+if len(__name__.split(".")) == 3:
+    import scraper.workers.worker_pool  # pylint: disable=unused-import
+else:
+    pass
 
 
 class Worker(ABC):

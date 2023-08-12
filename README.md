@@ -10,6 +10,8 @@ This code provides an example of a Command Line Interface (CLI) tool for web scr
 * __additional extra arguments inside the code for more control over the scalability__ - Allowing additional fine-tuning for specific requirements
 * __dynamic resource usage scaling based on usage__ - Because the algorithm is an Online algorithm we want the system usage to scale based on the available workload up to an upper bound
 * __CLI usage__ - Nice CLI usage and integration
+* __import vs run module as main__ - This code can be used both with an import and both as running as the main module straight from the command line with no imports required
+
 ## Prerequisites
 
 - Python 3.10 or later installed on your system.

@@ -2,9 +2,12 @@ from typing import Generator
 from logging import warning
 from bs4 import BeautifulSoup as bs4
 import requests
-from ..utils import is_valid_url, calculate_html_timeout, force_absolute_url  # type:ignore # pylint: disable=import-error # noqa
-from ..utils import TimeoutFunction  # type:ignore # pylint: disable=import-error # noqa
-from .extractor import Extractor
+if len(__name__.split(".")) == 3:
+    from ..utils import is_valid_url, calculate_html_timeout, force_absolute_url, TimeoutFunction
+    from .extractor import Extractor
+else:
+    from utils import is_valid_url, calculate_html_timeout, force_absolute_url, TimeoutFunction  # type:ignore # noqa  #pylint: disable=import-error
+    from extractors import Extractor  # type:ignore # noqa  #pylint: disable=import-error
 
 
 class LinkExtractor(Extractor):

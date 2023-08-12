@@ -11,10 +11,26 @@
             "program": "main.py",
             "console": "integratedTerminal",
             "justMyCode": true,
+            "cwd": "${workspaceFolder}",
             "args": [
                 "https://www.ynetnews.com/",
                 "5",
                 "3",
+                "true"
+            ]
+        },
+        {
+            "name": "module as main.py",
+            "type": "python",
+            "request": "launch",
+            "program": "__main__.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "cwd": "${workspaceFolder}/scraper",
+            "args": [
+                "https://www.ynetnews.com/",
+                "5",
+                "2",
                 "true"
             ]
         }

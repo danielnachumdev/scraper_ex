@@ -1,7 +1,8 @@
 from queue import Queue
 from typing import Optional, Any
 from threading import Semaphore
-import scraper.workers  # pylint: disable=unused-import
+if len(__name__.split(".")) == 3:
+    import scraper.workers  # pylint: disable=unused-import
 
 
 class WorkerPool:
