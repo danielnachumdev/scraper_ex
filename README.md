@@ -30,7 +30,7 @@ pip install -r ./requirements/publish.txt
 ```
 ## Usage
 ```python
-from scraper import Scraper
+from scraper import Scraper, ScraperWorker, LinkExtractor
 NUM_THREADS=4
 s = Scraper(
     NUM_THREADS,
