@@ -1,16 +1,7 @@
-from threading import Lock, Semaphore
+from threading import Lock
 import os
-from queue import Queue
-from typing import Any
-# run as main module or not
-if len(__name__.split(".")) == 1:
-    from utils import LinkWrapper  # type:ignore # pylint: disable=import-error # noqa
-    from workers import Worker, ScraperWorker, WorkerPool  # type:ignore # pylint: disable=import-error # noqa
-    from extractors import Extractor  # type:ignore # pylint: disable=import-error # noqa
-else:
-    from .utils import LinkWrapper
-    from .workers import Worker, ScraperWorker, WorkerPool
-    from .extractors import Extractor
+from .utils import LinkWrapper
+from .workers import Worker, WorkerPool
 
 
 class Scraper:
@@ -35,7 +26,7 @@ class Scraper:
                 os.makedirs(f"./{depth}")
         unique_set_lock: Lock = Lock()
         unique_set: set[str] = set()
-        pool = WorkerPool(self.num_workers, self.worker_class, globals={
+        pool = WorkerPool(self.num_workers, self.worker_class, global_variables={
             "extract_amount": extract_amount,
             "max_depth": max_depth,
             "unique": unique,
@@ -43,7 +34,7 @@ class Scraper:
             "unique_set_lock": unique_set_lock
         },
         )
-        pool.run()
+        pool.start()
         pool.submit(LinkWrapper(base_url, 0))
 
 

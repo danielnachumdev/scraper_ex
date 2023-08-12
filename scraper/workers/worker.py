@@ -1,25 +1,20 @@
 from threading import Thread
 from abc import ABC, abstractmethod
-from typing import Callable, Optional, Any
+from typing import Optional, Any
 from logging import error
-
-if len(__name__.split(".")) == 2:
-    import worker_pool  # type:ignore # pylint: disable=import-error # noqa
-else:
-    import scraper.workers.worker_pool
-Job = Callable[[], None]
+import scraper.workers.worker_pool  # pylint: disable=unused-import
 
 
 class Worker(ABC):
     """A Worker Interface
     """
 
-    def __init__(self, pool: "worker_pool.WorkerPool") -> None:
+    def __init__(self, pool: "scraper.workers.worker_pool.WorkerPool") -> None:
         self.pool = pool
         self.thread: Thread = Thread(target=self._loop)
 
     @abstractmethod
-    def _work(self, *args, **kwargs) -> None:
+    def _work(self, obj: Any) -> None:
         """execution of a single job
         """
 
@@ -46,11 +41,11 @@ class Worker(ABC):
         """
         return self.thread.is_alive()
 
-    def work(self, *args, **kwargs) -> None:
+    def work(self, obj: Any) -> None:
         """performed the actual work that needs to happen
         execution of a single job
         """
-        self._work(*args, **kwargs)
+        self._work(obj)
         self.notify()
 
     def notify(self) -> None:
@@ -58,10 +53,15 @@ class Worker(ABC):
         to signal actions if needed
         will call 'notification_function'
         """
-        self.pool.notify()
+        self.pool._notify()  # pylint: disable=protected-access
 
     def acquire(self) -> Optional[tuple[Any]]:
-        return self.pool.acquire()
+        """acquire a new job object to work on from the pool
+        will return a tuple of only one object (the job) or None if there are no more jobs
+        Returns:
+            Optional[tuple[Any]]: tuple of job object or None
+        """
+        return self.pool._acquire()  # pylint: disable=protected-access
 
 
 __all__ = [

@@ -9,7 +9,7 @@ class Extractor(ABC):
     RETRIES: int = 5
     EMPTY_DATA: Any = None
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs) -> None:  # pylint: disable=unused-argument
         self._prepared_data: Any = Extractor.EMPTY_DATA
 
     @abstractmethod
