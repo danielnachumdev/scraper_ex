@@ -1,12 +1,12 @@
 import argparse
 if __name__ == "__main__":
     from scraper import Scraper  # type:ignore # pylint: disable=import-error # noqa
-    from extractor import Extractor, LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
-    from worker import ScraperWorker  # type:ignore # pylint: disable=import-error # noqa
+    from extractors import Extractor, LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
+    from workers import ScraperWorker  # type:ignore # pylint: disable=import-error # noqa
 else:
     from .scraper import Scraper
-    from .worker import ScraperWorker
-    from .extractor import Extractor, LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
+    from .workers import ScraperWorker
+    from .extractors import Extractor, LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
 
 # arbitrary chosen values that can be added to CLI but it is not in the definitions
 NUM_THREADS: int = 10
@@ -55,7 +55,7 @@ def main() -> None:
                         help="A boolean")
 
     args = parser.parse_args()
-    Scraper(NUM_THREADS, ScraperWorker, LinkExtractor).scrape(
+    Scraper(NUM_THREADS, ScraperWorker).scrape(
         args.base_url,
         args.extract_amount,
         args.max_depth,

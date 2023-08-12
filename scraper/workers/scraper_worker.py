@@ -1,14 +1,13 @@
 from threading import Lock
-from queue import Queue, Empty
-from logging import error
 # run as main module or not
 if len(__name__.split(".")) == 2:
-    from worker import Worker  # type:ignore # pylint: disable=import-error # noqa
-    from extractor import Extractor  # type:ignore # pylint: disable=import-error # noqa
+    from workers import Worker, WorkerPool  # type:ignore # pylint: disable=import-error # noqa
+    from extractors import Extractor, LinkExtractor  # type:ignore # pylint: disable=import-error # noqa
     from utils import encode_url_to_filename, LinkWrapper  # type:ignore # pylint: disable=import-error # noqa
 else:
     from .worker import Worker
-    from ..extractor import Extractor
+    import scraper.workers.worker_pool
+    from ..extractors import Extractor, LinkExtractor
     from ..utils import encode_url_to_filename, LinkWrapper
 
 
@@ -16,28 +15,11 @@ class ScraperWorker(Worker):
     """An implementation for Worker which does scraping
     """
 
-    def __init__(self, extractor_class: Extractor, *run_args, **run_kwargs):  # pylint: disable=useless-parent-delegation
-        super().__init__(extractor_class, *run_args, **run_kwargs)
+    def __init__(self, pool: "scraper.workers.worker_pool.WorkerPool"):
+        super().__init__(pool)
 
-    def _run(self, queue: Queue[LinkWrapper], unique_set: set[str], unique_set_lock: Lock,
-             extract_amount: int, max_depth: int, unique: bool):
-        while True:
-            try:
-                try:
-                    # arbitrarily chosen amount of time based on the parameters so the threads wont close too early
-                    lw: LinkWrapper = queue.get(
-                        timeout=Extractor.TIMEOUT*Extractor.RETRIES)
-                except Empty:
-                    break
-                self.work(lw, queue, unique_set, extract_amount,
-                          max_depth, unique, unique_set_lock)
-            except Exception as e:  # pylint: disable=broad-exception-caught
-                error(f"worker thread encountered an error: {e}")
-
-    def _work(self, lw: LinkWrapper, queue: Queue[LinkWrapper], unique_set: set[str], extract_amount: int,
-              max_depth: int, unique: bool, unique_set_lock: Lock) -> None:
+    def _work(self, lw: LinkWrapper) -> None:
         """one job
-
         Args:
             lw (LinkWrapper): the current item
             queue (Queue[LinkWrapper]): the queue to get items from
@@ -48,9 +30,15 @@ class ScraperWorker(Worker):
             unique_set_lock (Lock): a synchronization lock for non atomic operations on the set
                 that should be shared across all instances of this function
         """
+        unique_set: set[str] = self.pool.globals["unique_set"]
+        extract_amount: int = self.pool.globals["extract_amount"]
+        max_depth: int = self.pool.globals["max_depth"]
+        unique: bool = self.pool.globals["unique"]
+        unique_set_lock: Lock = self.pool.globals["unique_set_lock"]
+
         filename: str = encode_url_to_filename(lw.url)
         extract_count: int = 0
-        extractor: Extractor = self.extractor_class(lw.url)
+        extractor: Extractor = LinkExtractor(lw.url)
         extractor.prepare()
         with open(f"./{lw.depth}/{filename}.html", "w", encoding="utf8") as f:
             f.write(extractor.get_data())
@@ -64,5 +52,9 @@ class ScraperWorker(Worker):
                             continue
                         unique_set.add(link)
                 extract_count += 1
-                queue.put(LinkWrapper(link, lw.depth+1))
-        queue.task_done()
+                self.pool.submit(LinkWrapper(link, lw.depth+1))
+
+
+__all__ = [
+    "ScraperWorker"
+]
