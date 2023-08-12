@@ -9,7 +9,8 @@ class Worker(ABC):
     """A Worker Interface
     """
 
-    def __init__(self, pool: "scraper.workers.worker_pool.WorkerPool") -> None:
+    def __init__(self, id: int, pool: "scraper.workers.worker_pool.WorkerPool") -> None:  # pylint: disable=redefined-builtin #noqa
+        self.id = id
         self.pool = pool
         self.thread: Thread = Thread(target=self._loop)
 

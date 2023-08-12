@@ -2,7 +2,7 @@ from threading import Lock
 from typing import Any, cast
 import scraper.workers.worker_pool  # pylint: disable=unused-import
 from .worker import Worker
-from ..extractors import Extractor, LinkExtractor
+from ..extractors import Extractor
 from ..utils import encode_url_to_filename, LinkWrapper
 
 
@@ -10,8 +10,9 @@ class ScraperWorker(Worker):
     """An implementation for Worker which does scraping
     """
 
-    def __init__(self, pool: "scraper.workers.worker_pool.WorkerPool", extractor_class: type[Extractor]):
-        super().__init__(pool)
+    def __init__(self, id: int, pool: "scraper.workers.worker_pool.WorkerPool",  # pylint: disable=redefined-builtin #noqa
+                 extractor_class: type[Extractor]):
+        super().__init__(id, pool)
         self.extractor_class: type[Extractor] = extractor_class
 
     def _work(self, obj: Any) -> None:

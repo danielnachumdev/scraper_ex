@@ -1,7 +1,7 @@
 import argparse
 from .scraper import Scraper
 from .workers import ScraperWorker
-from .extractors import Extractor
+from .extractors import Extractor, LinkExtractor
 
 # arbitrary chosen values that can be added to CLI but it is not in the definitions
 NUM_THREADS: int = 10
@@ -50,7 +50,12 @@ def main() -> None:
                         help="A boolean")
 
     args = parser.parse_args()
-    Scraper(NUM_THREADS, ScraperWorker).scrape(
+    s = Scraper(
+        NUM_THREADS,
+        ScraperWorker,
+        dict(extractor_class=LinkExtractor)
+    )
+    s.scrape(
         args.base_url,
         args.extract_amount,
         args.max_depth,

@@ -8,13 +8,14 @@ class WorkerPool:
     """A worker pool class
     """
 
-    def __init__(self, num_workers: int, worker_class: type["scraper.workers.Worker"], global_variables: dict) -> None:
+    def __init__(self, num_workers: int, worker_class: type["scraper.workers.Worker"], w_kwargs: dict, global_variables: dict) -> None:
         self.num_workers = num_workers
         self.global_variables: dict = global_variables
         self.q: Queue[tuple[Any]] = Queue()
         self.worker_class = worker_class
         self.workers: list["scraper.workers.Worker"] = []
         self.sem = Semaphore(0)
+        self.w_kwargs = w_kwargs
 
     def submit(self, job: Any) -> None:
         """submit a job to the pool
@@ -43,8 +44,8 @@ class WorkerPool:
     def start(self) -> None:
         """starts running the pool of workers
         """
-        for _ in range(self.num_workers):
-            w = self.worker_class(self)
+        for i in range(self.num_workers):
+            w = self.worker_class(i, self, **self.w_kwargs)
             w.run()
             self.workers.append(w)
 

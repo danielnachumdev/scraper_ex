@@ -1,7 +1,7 @@
 import re
-import validators  # type:ignore
-from urllib.parse import urlparse, urljoin
 from typing import Callable
+from urllib.parse import urlparse, urljoin
+import validators  # type:ignore
 
 
 def encode_url_to_filename(url: str) -> str:
@@ -64,6 +64,15 @@ def calculate_html_timeout(base_timeout: float, try_number: int) -> float:
 
 
 def force_absolute_url(base_url: str, url: str) -> str:
+    """forces a url to be absolute
+
+    Args:
+        base_url (str): a base url
+        url (str): a maybe relative url to base url
+
+    Returns:
+        str: the absolute version of the url
+    """
     # Parse the base URL and the given URL
     parsed_url = urlparse(url)
 
