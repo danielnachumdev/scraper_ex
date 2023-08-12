@@ -1,2 +1,2 @@
-from .base_extractor import BaseExtractor
+from .extractor import Extractor
 from .link_extractor import LinkExtractor

@@ -7,14 +7,14 @@ import requests
 if len(__name__.split(".")) == 2:
     from utils import is_valid_url, calculate_html_timeout, force_absolute_url  # type:ignore # pylint: disable=import-error # noqa
     from utils import TimeoutFunction  # type:ignore # pylint: disable=import-error # noqa
-    from extractor import BaseExtractor  # type:ignore # pylint: disable=import-error # noqa
+    from extractor import Extractor  # type:ignore # pylint: disable=import-error # noqa
 else:
     from ..utils import is_valid_url, calculate_html_timeout, force_absolute_url  # type:ignore # pylint: disable=import-error # noqa
     from ..utils import TimeoutFunction  # type:ignore # pylint: disable=import-error # noqa
-    from .base_extractor import BaseExtractor
+    from .extractor import Extractor
 
 
-class LinkExtractor(BaseExtractor):
+class LinkExtractor(Extractor):
     """A wrapper class over bs4 to extract urls from html
     """
     # arbitrary value that should be enough but will make sure the program wont run forever and will get stuck
@@ -31,7 +31,7 @@ class LinkExtractor(BaseExtractor):
         Yields:
             Generator[str, None, None]: this function yield 'str' only
         """
-        if self.get_data() is BaseExtractor.EMPTY_DATA:
+        if self.get_data() is Extractor.EMPTY_DATA:
             return
         soup = bs4(self.get_data(), features="html.parser")
         for a_tag in soup.find_all("a", href=True):
@@ -44,12 +44,12 @@ class LinkExtractor(BaseExtractor):
         """downloads the html of the base_url
         """
         self._tried_to_acquire = True
-        for i in range(BaseExtractor.RETRIES):
+        for i in range(Extractor.RETRIES):
             try:
                 # we want the timeout to increase slightly with each
                 # fail because maybe the call needs more time
                 # but it has to be upper bounded or we risk the thread hanging
-                timeout = self.timeout_func(BaseExtractor.TIMEOUT, i)
+                timeout = self.timeout_func(Extractor.TIMEOUT, i)
                 # downloading html
                 response = requests.get(self.base_url, timeout=timeout)
                 # checking if it was successful or not
@@ -61,7 +61,7 @@ class LinkExtractor(BaseExtractor):
                 pass
         # if completely failed notify end user
         warning(
-            f"{self.base_url} Failed. Retries= {BaseExtractor.RETRIES}, Base timeout= {BaseExtractor.TIMEOUT}")
+            f"{self.base_url} Failed. Retries= {Extractor.RETRIES}, Base timeout= {Extractor.TIMEOUT}")
         # works well with implementation
         return ""
 

@@ -6,18 +6,22 @@ if len(__name__.split(".")) == 1:
     from utils import LinkWrapper  # type:ignore # pylint: disable=import-error # noqa
     from worker import Worker  # type:ignore # pylint: disable=import-error # noqa
     from worker import ScraperWorker  # type:ignore # pylint: disable=import-error # noqa
+    from extractor import Extractor  # type:ignore # pylint: disable=import-error # noqa
 else:
     from .utils import LinkWrapper
     from .worker import Worker
     from .worker import ScraperWorker
+    from .extractor import Extractor
 
 
 class Scraper:
     """will scrape a site according to the instructions. Doing so iteratively with multithreading
     """
 
-    def __init__(self, num_workers: int) -> None:
+    def __init__(self, num_workers: int, worker_class: Worker, extractor_class: Extractor) -> None:
         self.num_workers = num_workers
+        self.worker_class = worker_class
+        self.extractor_class = extractor_class
 
     def scrape(self, base_url: str, extract_amount: int, max_depth: int, unique: bool) -> None:
         """main entry point for logic
@@ -44,7 +48,8 @@ class Scraper:
 
         # create workers and start them
         workers: set[Worker] = set([
-            ScraperWorker(
+            self.worker_class(
+                self.extractor_class,
                 queue,
                 unique_set,
                 unique_set_lock,
@@ -70,10 +75,10 @@ class Scraper:
             maximum_allowed = min(queue.unfinished_tasks, self.num_workers)
             if len(workers) < maximum_allowed:
                 for _ in range(maximum_allowed-len(workers)):
-                    w = ScraperWorker(queue, unique_set, extract_amount,
-                                      max_depth, unique, unique_set_lock)
-                    w.run()
-                    workers.add(w)
+                    worker: Worker = self.worker_class(self.extractor_class, queue, unique_set, extract_amount,
+                                                       max_depth, unique, unique_set_lock)
+                    worker.run()
+                    workers.add(worker)
 
 
 __all__ = [
