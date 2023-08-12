@@ -32,7 +32,17 @@ pip install -r ./requirements/publish.txt
 ```python
 from scraper import Scraper
 NUM_THREADS=4
-Scraper(NUM_THREADS).scrape(base_url, extract_amount, max_depth, unique) 
+s = Scraper(
+    NUM_THREADS,
+    ScraperWorker,
+    dict(extractor_class=LinkExtractor)
+)
+s.scrape(
+    base_url,
+    extract_amount,
+    max_depth,
+    unique
+)
 ```
 or
 ```bash
